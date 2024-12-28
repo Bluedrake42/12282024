@@ -203,14 +203,14 @@ class EnemyPart:
             return False
             
         # Apply armor rating to incoming damage
-        damage = impact_data["damage"] / self.armor_rating
+        damage = round(impact_data["damage"] / self.armor_rating, 1)  # Round to 1 decimal place
         
         # Additional effects based on penetration
         if impact_data["penetration"] > 0.8:
             damage *= 1.5  # Critical hit for high penetration
             
-        # Apply damage
-        self.health -= damage
+        # Apply damage (round health to 1 decimal place)
+        self.health = round(max(0, self.health - damage), 1)
         
         # Update color based on damage
         damage_factor = max(0, self.health / self.max_health)

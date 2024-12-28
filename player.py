@@ -186,8 +186,8 @@ class Player:
             return False
             
         # Apply armor rating to incoming damage
-        final_damage = damage / self.armor_rating
-        self.health = max(0, self.health - final_damage)
+        final_damage = round(damage / self.armor_rating, 1)  # Round to 1 decimal place
+        self.health = round(max(0, self.health - final_damage), 1)  # Round health to 1 decimal place
         
         if self.health <= 0:
             self.die()
@@ -372,7 +372,7 @@ class Player:
 
         # Draw text
         percentage_text = f"{int(health_percentage * 100)}%"
-        fraction_text = f"{self.health}/{self.max_health}"
+        fraction_text = f"{round(self.health, 1)}/{self.max_health}"  # Round displayed health to 1 decimal
         
         # Draw percentage text (centered in health bar)
         self.text_renderer.draw_text_centered_rect(percentage_text, 
