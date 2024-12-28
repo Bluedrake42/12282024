@@ -6,30 +6,7 @@ import numpy as np
 import configparser
 import time
 from text_renderer import TextRenderer
-
-class Projectile:
-    def __init__(self, pos, direction, speed=30.0):
-        self.pos = list(pos)
-        # Normalize direction
-        length = np.sqrt(sum(x*x for x in direction))
-        self.velocity = [d * speed / length for d in direction]
-        self.alive = True
-        self.radius = 0.2
-
-    def update(self, dt):
-        self.pos[0] += self.velocity[0] * dt
-        self.pos[1] += self.velocity[1] * dt
-        self.pos[2] += self.velocity[2] * dt
-
-    def draw(self):
-        glPushMatrix()
-        glTranslatef(*self.pos)
-        glColor3f(1, 1, 0)  # Yellow projectile
-        glPointSize(5.0)
-        glBegin(GL_POINTS)
-        glVertex3f(0, 0, 0)
-        glEnd()
-        glPopMatrix()
+from projectile import PlayerProjectile
 
 class Player:
     def __init__(self):
@@ -49,6 +26,10 @@ class Player:
         self.is_dead = False
         self.death_time = None
         self.respawn_delay = int(config.get('Player', 'respawn_delay', fallback='10'))
+        
+        # Combat properties
+        self.armor_rating = 1.0
+        self.material_type = "player"  # Special material type for player
         
         # Zoom settings
         self.is_zoomed = False
@@ -204,7 +185,10 @@ class Player:
         if self.is_dead:
             return False
             
-        self.health = max(0, self.health - damage)
+        # Apply armor rating to incoming damage
+        final_damage = damage / self.armor_rating
+        self.health = max(0, self.health - final_damage)
+        
         if self.health <= 0:
             self.die()
             return True
@@ -248,7 +232,7 @@ class Player:
             self.pos[2] + direction[2]
         ]
         
-        return Projectile(spawn_pos, direction)
+        return PlayerProjectile(spawn_pos, direction)
 
     def update(self, dt, current_time):
         if self.is_dead:
