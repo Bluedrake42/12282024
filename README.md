@@ -33,3 +33,7 @@ The game uses:
 - Pygame for window management and input handling
 - OpenGL for 3D rendering
 - Basic vector math for movement calculations 
+
+## License
+
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details. 
